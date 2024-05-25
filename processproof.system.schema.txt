@@ -1,0 +1,180 @@
+Principals:
+urn:pp:System.Security.Principal.User
+urn:pp:System.Security.Principal.UserGroup
+
+Actions:
+Action
+Role - group of actions
+
+Resource
+ResourceCollection - group of resources (non-identifying)
+
+
+
+ProcessProof URN Format:
+urn:{systemNamespace}:{resourceType}::{resourceIdentifier}
+
+resource identifier format:
+all IDs are uuids, or semantic indicators like "jobs:read"
+
+
+
+
+
+SecurityResourceTypes:
+urn:pp:System.Security.Principal
+urn:pp:System.Security.Principal.User
+urn:pp:System.Security.Principal.UserGroup
+urn:pp:System.Security.Action
+urn:pp:System.Security.Role
+urn:pp:System.Security.Policy
+	. Principal
+	. Resource
+	. Grant
+
+SystemResourceTypes:
+urn:pp:System.Template.Affidavit
+
+AccountResourceTypes:
+urn:pp:System
+urn:pp:System.Account
+urn:pp:System.Account.Details
+urn:pp:System.Account.Profile
+urn:pp:System.Account.JobCollection
+urn:pp:System.Account.Job
+urn:pp:System.Account.JobCollection.Job
+urn:pp:System.Account.Job.ServiceAttempt
+urn:pp:System.Account.Job.Affidavit
+urn:pp:System.Account.Job.JobServiceRequest
+urn:pp:System.Account.Job.JobServiceAgreement
+urn:pp:System.Account.Client
+urn:pp:System.Account.Client.Contact
+urn:pp:System.Account.Template.Affidavit
+
+
+ActionsByResourceType:
+	System
+		- system:*
+		- system:Admin
+		- system:CreateAccount
+		- system:UpdateAccount
+		- system:DeactivateAccount
+		- system:ActivateAccount
+		- system:RemoveAccount
+		- system:AdminAffidavitTemplates
+
+		Account
+			- account:*
+			- account:Admin
+			- account:AdminJobCollections
+			- account:AdminAffidavitTemplates
+			- account:UpdateDetails
+			- account:UpdateProfile
+
+			Client
+				- client:*
+				- client:ListClients
+				- client:WriteClient
+				- client:ReadClient
+				- client:RemoveClient
+
+				- client:WriteContact
+				- client:RemoveContact
+
+				- client:WritePaymentMethod
+				- client:RemovePaymentMethod
+
+			JobCollection
+				- jobs:*
+				- jobs:ListJobsCollections
+				- jobs:ListJobs
+				- jobs:AddJobs
+				- jobs:RemoveJobs
+				- jobs:ListJobsCreatedBySelf
+				- jobs:ListJobsAssignedToSelf
+
+					Job
+					- jobs:WriteJob
+					- jobs:ReadJob
+					- jobs:RemoveJob
+					- jobs:RemoveJobCreateBySelf
+					- jobs:RequestProcessServer
+					- jobs:RequestJobAssignment
+					- jobs:Assign
+					- jobs:Unassign
+					- jobs:AssignToSelf
+					- jobs:UnassignToSelf
+
+					ServiceRequest
+						- jobs:CreateServiceRequest
+						- jobs:AcceptServiceRequest
+						- jobs:CreateJobRequest
+						- jobs:AcceptJobRequest
+						- jobs:ReadServiceAgreementInvolvingSelf
+
+					ServiceAttempt
+						- jobs:AddServiceAttempt
+						- jobs:RemoveServiceAttempt
+						- jobs:RemoveServiceAttemptCreatedBySelf
+
+					Affidavit
+						- jobs:GenerateAffidavit
+						- jobs:GenerateAffidavitForJobServicedBySelf
+						- jobs:RemoveAffidavit
+						- jobs:RemoveAffidavitCreateBySelf
+
+On first boot:
+
+1. Create system:
+- urn:pp:System::{new-sytem-uuid}
+
+2. Create Security System
+	A. Create Actions (see above)
+
+	B. Create Roles:
+	- urn:pp:System.Security.Role::SystemAdmin
+		. Name: SystemAdminstrator
+		- urn:pp:System.Security.Action::system:*
+		- urn:pp:System.Security.Action::account:*
+		- urn:pp:System.Security.Action::client:*
+		- urn:pp:System.Security.Action::jobs:*
+
+	- urn:pp:System.Security.Role::AccountAdmin
+		. Name AccountAdminstrator
+		- urn:pp:System.Security.Action::account:*
+		- urn:pp:System.Security.Action::client:*
+		- urn:pp:System.Security.Action::jobs:*
+
+	C. Create System Owner Account
+		- urn:pp:System.Security.User::{system-owner-user-uuid}
+		- urn:pp:System.Security.Policy
+			. Principal urn:pp:System.Security.Principal.User::${system-owner-user-uuid}
+			. Resource urn:pp:System::${new-system-uuid}
+			. Grant System.Security.Action::SystemAdmin
+
+
+
+New User Creation:
+(indentation represents non-identifying relationships created in graph)
+
+- urn:pp:System.Account::${new-account-uuid}
+	- urn:pp:System.Security.Principal.User::${new-user-id}
+
+	- urn:pp:System.Account.Details::${new-account-details-uuid}
+	- urn:pp:System.Account.Profile::${new-account-profile-uuid}
+	- urn:pp:System.Account.JobCollection::${new-account-job-collection-uuid}
+
+	- urn:pp:System.Security.Principal.UserGroup::${new-usergroup-id}
+		. Name: AccountAdminsitrators
+		. AccountId: ${new-account-uuid}
+
+	- urn:pp:System.Security.Policy
+		. Principal urn:pp:System.Security.Principal.UserGroup::${new-usergroup-uuid}
+		. Resource urn:pp:System.Account::${new-account-uuid}
+		. Grant System.Security.Role::AccountAdministrator
+
+	** add new-user-id to new-user-group-id
+
+
+
+

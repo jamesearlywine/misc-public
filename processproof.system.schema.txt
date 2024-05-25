@@ -43,13 +43,13 @@ urn:pp:System.Account.Details
 urn:pp:System.Account.Profile
 urn:pp:System.Account.JobCollection
 urn:pp:System.Account.Job
-urn:pp:System.Account.JobCollection.Job
 urn:pp:System.Account.Job.ServiceAttempt
 urn:pp:System.Account.Job.Affidavit
 urn:pp:System.Account.Job.JobServiceRequest
 urn:pp:System.Account.Job.JobServiceAgreement
 urn:pp:System.Account.Client
 urn:pp:System.Account.Client.Contact
+urn:pp:System.Account.Client.PaymentMethod
 urn:pp:System.Account.Template.Affidavit
 
 

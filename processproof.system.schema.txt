@@ -156,7 +156,7 @@ On first boot:
 
 
 New User Creation:
-(indentation represents non-identifying relationships created in graph)
+(indentation represents non-identifying relationships stored in graph)
 
 - urn:pp:System.Account::${new-account-uuid}
 	- urn:pp:System.Security.Principal.User::${new-user-id}

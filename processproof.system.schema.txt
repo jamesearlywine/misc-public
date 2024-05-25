@@ -22,35 +22,35 @@ all IDs are uuids, or semantic indicators like "jobs:read"
 
 
 SecurityResourceTypes:
-urn:pp:System.Security.Principal
-urn:pp:System.Security.Principal.User
-urn:pp:System.Security.Principal.UserGroup // collection of User
-urn:pp:System.Security.Grant.Action
-urn:pp:System.Security.Grant.Role // collection of Action
-urn:pp:System.Security.Policy
-	. Principal
-	. Grant
-	. Resource
+  urn:pp:System.Security.Principal
+  urn:pp:System.Security.Principal.User
+  urn:pp:System.Security.Principal.UserGroup // collection of User
+  urn:pp:System.Security.Grant.Action
+  urn:pp:System.Security.Grant.Role // collection of Action
+  urn:pp:System.Security.Policy
+    . Principal
+    . Grant
+    . Resource
 
 
 SystemResourceTypes:
-urn:pp:System.Template.Affidavit
+  urn:pp:System.Template.Affidavit
 
 AccountResourceTypes:
-urn:pp:System
-urn:pp:System.Account
-urn:pp:System.Account.Details
-urn:pp:System.Account.Profile
-urn:pp:System.Account.JobCollection
-urn:pp:System.Account.Job
-urn:pp:System.Account.Job.ServiceAttempt
-urn:pp:System.Account.Job.Affidavit
-urn:pp:System.Account.Job.JobServiceRequest
-urn:pp:System.Account.Job.JobServiceAgreement
-urn:pp:System.Account.Client
-urn:pp:System.Account.Client.Contact
-urn:pp:System.Account.Client.PaymentMethod
-urn:pp:System.Account.Template.Affidavit
+  urn:pp:System
+  urn:pp:System.Account
+  urn:pp:System.Account.Details
+  urn:pp:System.Account.Profile
+  urn:pp:System.Account.JobCollection
+  urn:pp:System.Account.Job
+  urn:pp:System.Account.Job.ServiceAttempt
+  urn:pp:System.Account.Job.Affidavit
+  urn:pp:System.Account.Job.JobServiceRequest
+  urn:pp:System.Account.Job.JobServiceAgreement
+  urn:pp:System.Account.Client
+  urn:pp:System.Account.Client.Contact
+  urn:pp:System.Account.Client.PaymentMethod
+  urn:pp:System.Account.Template.Affidavit
 
 
 ActionsByResourceType:

@@ -24,13 +24,14 @@ all IDs are uuids, or semantic indicators like "jobs:read"
 SecurityResourceTypes:
 urn:pp:System.Security.Principal
 urn:pp:System.Security.Principal.User
-urn:pp:System.Security.Principal.UserGroup
-urn:pp:System.Security.Action
-urn:pp:System.Security.Role
+urn:pp:System.Security.Principal.UserGroup // collection of User
+urn:pp:System.Security.Grant.Action
+urn:pp:System.Security.Grant.Role // collection of Action
 urn:pp:System.Security.Policy
 	. Principal
-	. Resource
 	. Grant
+	. Resource
+
 
 SystemResourceTypes:
 urn:pp:System.Template.Affidavit

@@ -165,12 +165,12 @@ New User Creation:
 	- urn:pp:System.Account.Profile::${new-account-profile-uuid}
 	- urn:pp:System.Account.JobCollection::${new-account-job-collection-uuid}
 
-	- urn:pp:System.Security.Principal.UserGroup::${new-usergroup-id}
+	- urn:pp:System.Security.Principal.UserGroup::${account-administrators-usergroup-uuid}
 		. Name: AccountAdministrators
 		. AccountId: ${new-account-uuid}
 
 	- urn:pp:System.Security.Policy
-		. Principal urn:pp:System.Security.Principal.UserGroup::${new-usergroup-uuid}
+		. Principal urn:pp:System.Security.Principal.UserGroup::${account-administrators-usergroup-uuid}
 		. Resource urn:pp:System.Account::${new-account-uuid}
 		. Grant System.Security.Role::AccountAdministrator
 

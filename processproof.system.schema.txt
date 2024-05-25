@@ -166,7 +166,7 @@ New User Creation:
 	- urn:pp:System.Account.JobCollection::${new-account-job-collection-uuid}
 
 	- urn:pp:System.Security.Principal.UserGroup::${new-usergroup-id}
-		. Name: AccountAdminsitrators
+		. Name: AccountAdministrators
 		. AccountId: ${new-account-uuid}
 
 	- urn:pp:System.Security.Policy

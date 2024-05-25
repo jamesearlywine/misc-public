@@ -148,10 +148,10 @@ On first boot:
 
 	C. Create System Owner Account
 		- urn:pp:System.Security.User::{system-owner-user-uuid}
-		- urn:pp:System.Security.Policy
+		- urn:pp:System.Security.Policy::{system-owner-policy-uuid}
 			. Principal urn:pp:System.Security.Principal.User::${system-owner-user-uuid}
 			. Resource urn:pp:System::${new-system-uuid}
-			. Grant System.Security.Action::SystemAdmin
+			. Grant urn:pp:System.Security.Role::SystemAdmin
 
 
 

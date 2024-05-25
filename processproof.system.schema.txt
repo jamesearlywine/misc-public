@@ -44,13 +44,13 @@ AccountResourceTypes:
   urn:pp:System.Account.JobCollection
   urn:pp:System.Account.Job
   urn:pp:System.Account.Job.ServiceAttempt
-  urn:pp:System.Account.Job.Affidavit
+  urn:pp:System.Account.Job.ServiceAffidavit
   urn:pp:System.Account.Job.JobServiceRequest
   urn:pp:System.Account.Job.JobServiceAgreement
   urn:pp:System.Account.Client
   urn:pp:System.Account.Client.Contact
   urn:pp:System.Account.Client.PaymentMethod
-  urn:pp:System.Account.Template.Affidavit
+  urn:pp:System.Account.Template.ServiceAffidavit
 
 
 ActionsByResourceType:
@@ -62,13 +62,13 @@ ActionsByResourceType:
 		- system:DeactivateAccount
 		- system:ActivateAccount
 		- system:RemoveAccount
-		- system:AdminAffidavitTemplates
+		- system:AdminTemplates
 
 		Account
 			- account:*
 			- account:Admin
 			- account:AdminJobCollections
-			- account:AdminAffidavitTemplates
+			- account:AdminTemplates
 			- account:UpdateDetails
 			- account:UpdateProfile
 
@@ -119,10 +119,10 @@ ActionsByResourceType:
 						- jobs:RemoveServiceAttemptCreatedBySelf
 
 					Affidavit
-						- jobs:GenerateAffidavit
-						- jobs:GenerateAffidavitForJobServicedBySelf
-						- jobs:RemoveAffidavit
-						- jobs:RemoveAffidavitCreateBySelf
+						- jobs:GenerateServiceAffidavit
+						- jobs:GenerateServiceAffidavitForJobServicedBySelf
+						- jobs:RemoveServiceAffidavit
+						- jobs:RemoveServiceAffidavitCreateBySelf
 
 On first boot:
 

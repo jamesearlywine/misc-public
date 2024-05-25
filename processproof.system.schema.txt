@@ -159,7 +159,7 @@ New User Creation:
 (indentation represents non-identifying relationships stored in graph)
 
 - urn:pp:System.Account::${new-account-uuid}
-	- urn:pp:System.Security.Principal.User::${new-user-id}
+	- urn:pp:System.Security.Principal.User::${new-user-uuid}
 
 	- urn:pp:System.Account.Details::${new-account-details-uuid}
 	- urn:pp:System.Account.Profile::${new-account-profile-uuid}
@@ -174,7 +174,7 @@ New User Creation:
 		. Resource urn:pp:System.Account::${new-account-uuid}
 		. Grant System.Security.Role::AccountAdministrator
 
-	** add new-user-id to new-user-group-id
+	** add new-user-uuid to account-administrators-usergroup-uuid
 
 
 

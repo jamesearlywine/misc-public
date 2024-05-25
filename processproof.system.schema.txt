@@ -34,10 +34,10 @@ SecurityResourceTypes:
 
 
 SystemResourceTypes:
+  urn:pp:System
   urn:pp:System.Template.Affidavit
 
 AccountResourceTypes:
-  urn:pp:System
   urn:pp:System.Account
   urn:pp:System.Account.Details
   urn:pp:System.Account.Profile

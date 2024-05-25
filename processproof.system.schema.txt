@@ -127,21 +127,21 @@ ActionsByResourceType:
 On first boot:
 
 1. Create system:
-- urn:pp:System::{new-sytem-uuid}
+- urn:pp:System::{new-system-uuid}
 
 2. Create Security System
 	A. Create Actions (see above)
 
 	B. Create Roles:
 	- urn:pp:System.Security.Role::SystemAdmin
-		. Name: SystemAdminstrator
+		. Name: SystemAdministrator
 		- urn:pp:System.Security.Action::system:*
 		- urn:pp:System.Security.Action::account:*
 		- urn:pp:System.Security.Action::client:*
 		- urn:pp:System.Security.Action::jobs:*
 
 	- urn:pp:System.Security.Role::AccountAdmin
-		. Name AccountAdminstrator
+		. Name AccountAdministrator
 		- urn:pp:System.Security.Action::account:*
 		- urn:pp:System.Security.Action::client:*
 		- urn:pp:System.Security.Action::jobs:*

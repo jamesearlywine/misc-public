@@ -146,7 +146,7 @@ ActionsByResourceType:
 					- jobs:WriteJob
 					- jobs:ReadJob
 					- jobs:RemoveJob
-					- jobs:RemoveJobCreateBySelf
+					- jobs:RemoveJobCreatedBySelf
 					- jobs:RequestProcessServer
 					- jobs:RequestJobAssignment
 					- jobs:Assign
@@ -170,7 +170,7 @@ ActionsByResourceType:
 						- jobs:GenerateServiceAffidavit
 						- jobs:GenerateServiceAffidavitForJobServicedBySelf
 						- jobs:RemoveServiceAffidavit
-						- jobs:RemoveServiceAffidavitCreateBySelf
+						- jobs:RemoveServiceAffidavitCreatedBySelf
 
 			Templates
 				- templates:Admin

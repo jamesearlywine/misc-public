@@ -1,6 +1,6 @@
 Principals:
-urn:pp:System.Security.Principal.User
-urn:pp:System.Security.Principal.UserGroup
+urn:pp:Security.Principal.User
+urn:pp:Security.Principal.UserGroup
 
 Actions:
 Action
@@ -18,16 +18,18 @@ resource identifier format:
 all IDs are uuids, or semantic indicators like "jobs:read"
 
 
-
-
+Notes:
+- all security policy will be identity-based, attached to principal
+- security policy grants for a resource, will apply to all reosurce children
+- collections are n:n by reference, non-identifying, unless otherwise indicated
 
 SecurityResourceTypes:
-  urn:pp:System.Security.Principal
-  urn:pp:System.Security.Principal.User
-  urn:pp:System.Security.Principal.UserGroup // collection of User
-  urn:pp:System.Security.Grant.Action
-  urn:pp:System.Security.Grant.Role // collection of Action
-  urn:pp:System.Security.Policy
+  urn:pp:Security.Principal
+  urn:pp:Security.Principal.User
+  urn:pp:Security.Principal.UserGroup // collection of User
+  urn:pp:Security.Grant.Action
+  urn:pp:Security.Grant.Role // collection of Action
+  urn:pp:Security.Policy
     . Principal
     . Grant
     . Resource
@@ -54,6 +56,9 @@ AccountResourceTypes:
 
 
 ActionsByResourceType:
+	Security:
+		- security:manage
+
 	System
 		- system:*
 		- system:Admin
@@ -79,9 +84,11 @@ ActionsByResourceType:
 				- client:ReadClient
 				- client:RemoveClient
 
+				Contact
 				- client:WriteContact
 				- client:RemoveContact
 
+				PaymentMethod
 				- client:WritePaymentMethod
 				- client:RemovePaymentMethod
 
@@ -133,48 +140,53 @@ On first boot:
 	A. Create Actions (see above)
 
 	B. Create Roles:
-	- urn:pp:System.Security.Role::SystemAdmin
+	- urn:pp:Security.Role::SystemAdmin
 		. Name: SystemAdministrator
-		- urn:pp:System.Security.Action::system:*
-		- urn:pp:System.Security.Action::account:*
-		- urn:pp:System.Security.Action::client:*
-		- urn:pp:System.Security.Action::jobs:*
+		- urn:pp:Security.Action::system:*
+		- urn:pp:Security.Action::account:*
+		- urn:pp:Security.Action::client:*
+		- urn:pp:Security.Action::jobs:*
 
-	- urn:pp:System.Security.Role::AccountAdmin
+	- urn:pp:Security.Role::AccountAdmin
 		. Name AccountAdministrator
-		- urn:pp:System.Security.Action::account:*
-		- urn:pp:System.Security.Action::client:*
-		- urn:pp:System.Security.Action::jobs:*
+
+		- urn:pp:Security.Action::account:*
+		- urn:pp:Security.Action::client:*
+		- urn:pp:Security.Action::jobs:*
 
 	C. Create System Owner Account
-		- urn:pp:System.Security.User::{system-owner-user-uuid}
-		- urn:pp:System.Security.Policy::{system-owner-policy-uuid}
-			. Principal urn:pp:System.Security.Principal.User::${system-owner-user-uuid}
+		- urn:pp:Security.User::{system-owner-user-uuid}
+		- urn:pp:Security.Policy::{system-owner-policy-uuid}
+			. Principal urn:pp:Security.Principal.User::${system-owner-user-uuid}
 			. Resource urn:pp:System::${new-system-uuid}
-			. Grant urn:pp:System.Security.Role::SystemAdmin
+			. Grant urn:pp:Security.Role::SystemAdmin
 
 
 
 New User Creation:
 (indentation represents non-identifying relationships stored in graph)
 
+// create account
 - urn:pp:System.Account::${new-account-uuid}
-	- urn:pp:System.Security.Principal.User::${new-user-uuid}
-
 	- urn:pp:System.Account.Details::${new-account-details-uuid}
 	- urn:pp:System.Account.Profile::${new-account-profile-uuid}
 	- urn:pp:System.Account.JobCollection::${new-account-job-collection-uuid}
 
-	- urn:pp:System.Security.Principal.UserGroup::${account-administrators-usergroup-uuid}
-		. DisplayName: Account Administrators
-		. AccountId: ${new-account-uuid}
+// create Account Administrators UserGroup
+- urn:pp:Security.Principal.UserGroup::${account-administrators-usergroup-uuid}
+	. DisplayName: Account Administrators
+	. AccountId: ${new-account-uuid}
 
-	- urn:pp:System.Security.Policy
-		. Principal urn:pp:System.Security.Principal.UserGroup::${account-administrators-usergroup-uuid}
+// create User and assign them to Account Administrators UserGroup
+	- urn:pp:Security.Principal.User::${new-user-uuid}
+
+// grant to Account Administrators UserGroup, AccountAdministrator Role, for newly created account
+	- urn:pp:Security.Policy
+		. Principal urn:pp:Security.Principal.UserGroup::${account-administrators-usergroup-uuid}
 		. Resource urn:pp:System.Account::${new-account-uuid}
-		. Grant System.Security.Role::AccountAdministrator
+		. Grant Security.Role::AccountAdministrator
 
-	** add new-user-uuid to account-administrators-usergroup-uuid
+
 
 
 

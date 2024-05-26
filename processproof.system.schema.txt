@@ -54,6 +54,11 @@ AccountResourceTypes:
   urn:pp:System.Account.Client.PaymentMethod
   urn:pp:System.Account.Template.ServiceAffidavit
 
+  #v2
+  urn:pp:System.Account.Security.Role
+  urn:pp:System.Account.Security.UserGroup
+
+
 
 ActionsByResourceType:
 	Security:
@@ -93,17 +98,23 @@ ActionsByResourceType:
 			- account:UpdateDetails
 			- account:UpdateProfile
 
+			## v2, custom access controls for account resources
 			Security
 			- account:CreateRole
-			- account:AddToRole # Account-level actions only
+			- account:AddToRole # only actions: account:* client:* jobs:* templates:*
 			- account:RemoveFromRole
 			- account:RemoveRole
 			- account:CreateUserGroup
 			- account:AddToUserGroup # any user
 			- account:RemoveFromUserGroup
 			- account:RemoveUserGroup
-			- account:GrantRoleToUserGroupForResource ## only to UserGroups and for Resources belonging to this account
+			- account:ManagePolicy ## only for Resources that are children of this Account, any UserGroup any User
 
+			** System.Account.Security.* notes:
+				- UserGroups and UserRoles will have AccountId membership
+				- Will have human readable names, but system ID will be:
+					- ${account-uuid}--role-name
+					- ${account-uuid}--usergroup-name
 
 
 			Client
@@ -162,10 +173,9 @@ ActionsByResourceType:
 						- jobs:RemoveServiceAffidavitCreateBySelf
 
 			Templates
-				ServiceAffidavit
-					- templates:Admin
+				- templates:Admin
 
-		## end Account Resources
+		## end of Account section
 
 
 
@@ -226,4 +236,9 @@ New User Creation:
 		. Principal: urn:pp:Security.Principal.UserGroup::${account-administrators-usergroup-uuid}
 		. Grant: Security.Role::AccountAdministrator
 		. Resource: urn:pp:System.Account::${new-account-uuid}
+
+
+
+
+
 

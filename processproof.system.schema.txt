@@ -234,10 +234,10 @@ New User Creation:
 	- urn:pp:Security.Principal.User::${new-user-uuid}
 
 // grant to AccountAdministrators UserGroup, AccountAdministrator Role, for newly created account
-	- urn:pp:Security.Policy
-		. Principal: urn:pp:Security.Principal.UserGroup::${account-administrators-usergroup-uuid}
-		. Grant: Security.Role::AccountAdministrator
-		. Resource: urn:pp:System.Account::${new-account-uuid}
+- urn:pp:Security.Policy
+	. Principal: urn:pp:Security.Principal.UserGroup::${account-administrators-usergroup-uuid}
+	. Grant: Security.Role::AccountAdministrator
+	. Resource: urn:pp:System.Account::${new-account-uuid}
 
 
 

@@ -57,7 +57,22 @@ AccountResourceTypes:
 
 ActionsByResourceType:
 	Security:
-		- security:manage
+		- security:*
+		- security:CreateUser
+		- security:UpdateUser
+		- security:RemoveUser
+		- security:CreateUserGroup
+		- security:AddToUserGroup
+		- security:RemoveFromUserGroup
+		- security:RemoveUserGroup
+		- security:CreateAction
+		- security:RemoveAction
+		- security:CreateRole
+		- security:AddToRole
+		- security:RemoveFromRole
+		- security:RemoveRole
+		- security:ManagePolicy
+
 
 	System
 		- system:*
@@ -67,15 +82,25 @@ ActionsByResourceType:
 		- system:DeactivateAccount
 		- system:ActivateAccount
 		- system:RemoveAccount
-		- system:AdminTemplates
+
+		Template
+			- templates:admin
 
 		Account
 			- account:*
+			- account:Create
 			- account:Admin
-			- account:AdminJobCollections
-			- account:AdminTemplates
 			- account:UpdateDetails
 			- account:UpdateProfile
+
+			## in the future:
+			- account:CreateUserGroup
+			- account:AddToUserGroup
+			- account:RemoveFromUserGroup
+			- account:RemoveUserGroup
+			- ..etc.
+
+
 
 			Client
 				- client:*
@@ -94,6 +119,7 @@ ActionsByResourceType:
 
 			JobCollection
 				- jobs:*
+				- jobs:AdminJobCollections
 				- jobs:ListJobsCollections
 				- jobs:ListJobs
 				- jobs:AddJobs
@@ -131,6 +157,14 @@ ActionsByResourceType:
 						- jobs:RemoveServiceAffidavit
 						- jobs:RemoveServiceAffidavitCreateBySelf
 
+			Templates
+				ServiceAffidavit
+					- templates:Admin
+
+		## end Account Resources
+
+
+
 On first boot:
 
 1. Create system:
@@ -142,6 +176,8 @@ On first boot:
 	B. Create Roles:
 	- urn:pp:Security.Role::SystemAdmin
 		. Name: SystemAdministrator
+
+		- urn:pp:Security.Action::security:*
 		- urn:pp:Security.Action::system:*
 		- urn:pp:Security.Action::account:*
 		- urn:pp:Security.Action::client:*
@@ -150,6 +186,7 @@ On first boot:
 	- urn:pp:Security.Role::AccountAdmin
 		. Name AccountAdministrator
 
+		- urn:pp:Security.Action::security:managePolicy
 		- urn:pp:Security.Action::account:*
 		- urn:pp:Security.Action::client:*
 		- urn:pp:Security.Action::jobs:*
@@ -180,11 +217,11 @@ New User Creation:
 // create User and assign them to Account Administrators UserGroup
 	- urn:pp:Security.Principal.User::${new-user-uuid}
 
-// grant to Account Administrators UserGroup, AccountAdministrator Role, for newly created account
+// grant to AccountAdministrators UserGroup, AccountAdministrator Role, for newly created account
 	- urn:pp:Security.Policy
-		. Principal urn:pp:Security.Principal.UserGroup::${account-administrators-usergroup-uuid}
-		. Resource urn:pp:System.Account::${new-account-uuid}
-		. Grant Security.Role::AccountAdministrator
+		. Principal: urn:pp:Security.Principal.UserGroup::${account-administrators-usergroup-uuid}
+		. Grant: Security.Role::AccountAdministrator
+		. Resource: urn:pp:System.Account::${new-account-uuid}
 
 
 

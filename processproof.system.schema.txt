@@ -18,10 +18,25 @@ resource identifier format:
 all IDs are uuids, or semantic indicators like "jobs:read"
 
 
-Notes:
+Security Notes:
 - all security policy will be identity-based, attached to principal
-- security policy grants for a resource, will apply to all reosurce children
+- security policy grants for a resource, will apply to all resource children
+- security policy grants can be created by anyone who has
+	- security:ManagePolicy for a System.* resource, or
+	- account:ManagePolicy for a System.Account.* resource
+		- account:ManagePolicy can only include account-level actions/permissions
+			- account:*
+			- client:*
+			- jobs:*
+			- templates:*
+	- account ownership of a resource, can be found by tracing up the graph to find Account
+	- system ownership of a resource, can be found by tracing up the graph to find System
+	- System is recursion terminator, in determining the tree of parent resources, for which a user may be granted permission to act upon that resource
+
+Resource Notes:
 - collections are n:n by reference, non-identifying, unless otherwise indicated
+
+
 
 SecurityResourceTypes:
   urn:pp:Security.Principal

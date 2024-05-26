@@ -212,6 +212,8 @@ On first boot:
 			. Resource: urn:pp:System::${new-system-uuid}
 			. Grant: urn:pp:Security.Role::SystemAdmin
 
+	D. Initialize System.Templates (data-store + file-hosting) for document-generation-service
+
 
 
 New User Creation:

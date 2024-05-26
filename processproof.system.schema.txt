@@ -164,7 +164,7 @@ On first boot:
 
 
 New User Creation:
-(indentation represents non-identifying relationships stored in graph)
+** indentation represents (non-identifying) relationships stored in graph
 
 // create account
 - urn:pp:System.Account::${new-account-uuid}

@@ -39,16 +39,16 @@ Resource Notes:
 
 
 SecurityResourceTypes:
-  urn:sec:Security.Principal
-  urn:sec:Security.Principal.User
-  urn:sec:Security.Principal.UserGroup // collection of User
-  urn:sec:Security.Grant.Action
-  urn:sec:Security.Grant.Role // collection of Action
-  urn:sec:Security.Policy
+  urn:sec:Security.Authorization.Principal
+  urn:sec:Security.Authorization.Principal.User
+  urn:sec:Security.Authorization.Principal.UserGroup // collection of User
+  urn:sec:Security.Authorization.Grant.Action
+  urn:sec:Security.Authorization.Grant.Role // collection of Action
+  urn:sec:Security.Authorization.Policy
     . Principal
     . Grant
     . Resource
-  urn:sec:Security.SecureResource::${resourceUrn}
+  urn:sec:Security.Authorization.SecureResource::${resourceUrn}
 
 ActionsByResourceType
 	Security:

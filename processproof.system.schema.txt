@@ -39,15 +39,17 @@ Resource Notes:
 
 
 SecurityResourceTypes:
-  urn:pp:Security.Principal
-  urn:pp:Security.Principal.User
-  urn:pp:Security.Principal.UserGroup // collection of User
-  urn:pp:Security.Grant.Action
-  urn:pp:Security.Grant.Role // collection of Action
-  urn:pp:Security.Policy
+  urn:sec:Security.Principal
+  urn:sec:Security.Principal.User
+  urn:sec:Security.Principal.UserGroup // collection of User
+  urn:sec:Security.Grant.Action
+  urn:sec:Security.Grant.Role // collection of Action
+  urn:sec:Security.Policy
     . Principal
     . Grant
     . Resource
+  urn:sec:Security.SecuredResource::${resourceUrn}
+
 
 
 SystemResourceTypes:
@@ -69,7 +71,7 @@ AccountResourceTypes:
   urn:pp:System.Account.Client.PaymentMethod
   urn:pp:System.Account.Template.ServiceAffidavit
 
-  #v2
+  #v2 // these will map to corresponding urn:sec:Security.* entities
   urn:pp:System.Account.Security.Role
   urn:pp:System.Account.Security.UserGroup
 
@@ -127,7 +129,7 @@ ActionsByResourceType:
 
 			** System.Account.Security.* notes:
 				- UserGroups and UserRoles will have AccountId membership
-				- Will have human-readable names, but system ID will be:
+				- Will have human readable names, but system ID will be:
 					- ${account-uuid}--role-name
 					- ${account-uuid}--usergroup-name
 
@@ -227,7 +229,7 @@ On first boot:
 			. Resource: urn:pp:System::${new-system-uuid}
 			. Grant: urn:pp:Security.Role::SystemAdmin
 
-	D. Initialize System.Templates (data-store + file-hosting) for document-templating-service
+	D. Initialize System.Templates (data-store + file-hosting) for document-generation-service
 
 
 

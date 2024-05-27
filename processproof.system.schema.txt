@@ -127,7 +127,7 @@ ActionsByResourceType:
 
 			** System.Account.Security.* notes:
 				- UserGroups and UserRoles will have AccountId membership
-				- Will have human readable names, but system ID will be:
+				- Will have human-readable names, but system ID will be:
 					- ${account-uuid}--role-name
 					- ${account-uuid}--usergroup-name
 

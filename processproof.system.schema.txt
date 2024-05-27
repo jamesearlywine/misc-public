@@ -48,7 +48,28 @@ SecurityResourceTypes:
     . Principal
     . Grant
     . Resource
-  urn:sec:Security.SecuredResource::${resourceUrn}
+  urn:sec:Security.SecureResource::${resourceUrn}
+
+ActionsByResourceType
+	Security:
+		- security:*
+		- security:CreateUser
+		- security:UpdateUser
+		- security:RemoveUser
+		- security:CreateUserGroup
+		- security:AddToUserGroup
+		- security:RemoveFromUserGroup
+		- security:RemoveUserGroup
+		- security:CreateAction
+		- security:RemoveAction
+		- security:CreateRole
+		- security:AddToRole
+		- security:RemoveFromRole
+		- security:RemoveRole
+		- security:CreateSecureResource
+		- security:RemoveSecureResource
+		- security:CreateResourceBelongsToRelation
+		- security:ManageSecureResourcePolicy // create and remove permission grants for a resource
 
 
 
@@ -78,24 +99,6 @@ AccountResourceTypes:
 
 
 ActionsByResourceType:
-	Security:
-		- security:*
-		- security:CreateUser
-		- security:UpdateUser
-		- security:RemoveUser
-		- security:CreateUserGroup
-		- security:AddToUserGroup
-		- security:RemoveFromUserGroup
-		- security:RemoveUserGroup
-		- security:CreateAction
-		- security:RemoveAction
-		- security:CreateRole
-		- security:AddToRole
-		- security:RemoveFromRole
-		- security:RemoveRole
-		- security:ManagePolicy // create permission grants
-
-
 	System
 		- system:*
 		- system:Admin

@@ -39,6 +39,9 @@ Resource Notes:
 
 
 SecurityResourceTypes:
+  urn:sec:Security.Authentication.Principal.User
+  urn:sec:Security.Authentication.Principal.Session
+  
   urn:sec:Security.Authorization.Principal
   urn:sec:Security.Authorization.Principal.User
   urn:sec:Security.Authorization.Principal.UserGroup // collection of User

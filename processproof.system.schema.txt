@@ -21,17 +21,13 @@ all IDs are uuids, or semantic indicators like "jobs:read"
 Security Notes:
 - all security policy will be identity-based, attached to principal
 - security policy grants for a resource, will apply to all resource children
+  - BFFE caller may override
 - security policy grants can be created by anyone who has
-	- security:ManagePolicy for a System.* resource, or
-	- account:ManagePolicy for a System.Account.* resource
-		- account:ManagePolicy can only include account-level actions/permissions
-			- account:*
-			- client:*
-			- jobs:*
-			- templates:*
+	- security:ManagePolicy for a given resource
 	- account ownership of a resource, can be found by tracing up the graph to find Account
 	- system ownership of a resource, can be found by tracing up the graph to find System
 	- System is recursion terminator, in determining the tree of parent resources, for which a user may be granted permission to act upon that resource
+  - action is the recursion terminator, in determining the tree of roles assigned, to derive the flatmap of actions that a user may perform
 
 Resource Notes:
 - collections are n:n by reference, non-identifying, unless otherwise indicated
@@ -40,39 +36,130 @@ Resource Notes:
 
 SecurityResourceTypes:
   urn:sec:Security.Authentication.Principal.User
+  urn:sec:Security.Authentication.Principal.UserGroup // collection of User
   urn:sec:Security.Authentication.Principal.Session
-  
-  urn:sec:Security.Authorization.Principal
-  urn:sec:Security.Authorization.Principal.User
-  urn:sec:Security.Authorization.Principal.UserGroup // collection of User
+
+  urn:sec:Security.Authorization.SecureResource // id is corresponding resource urn
+
   urn:sec:Security.Authorization.Grant.Action
   urn:sec:Security.Authorization.Grant.Role // collection of Action
-  urn:sec:Security.Authorization.Policy
-    . Principal
-    . Grant
-    . Resource
-  urn:sec:Security.Authorization.SecureResource::${resourceUrn}
+    - Actions: Security.Authorization.Grant.Action[] // collection of Actions user may perform
 
-ActionsByResourceType
-	Security:
-		- security:*
-		- security:CreateUser
-		- security:UpdateUser
-		- security:RemoveUser
-		- security:CreateUserGroup
-		- security:AddToUserGroup
-		- security:RemoveFromUserGroup
-		- security:RemoveUserGroup
-		- security:CreateAction
-		- security:RemoveAction
-		- security:CreateRole
-		- security:AddToRole
-		- security:RemoveFromRole
-		- security:RemoveRole
-		- security:CreateSecureResource
-		- security:RemoveSecureResource
-		- security:CreateResourceBelongsToRelation
-		- security:ManageSecureResourcePolicy // create and remove permission grants for a resource
+  urn:sec:Security.Authorization.Policy
+    . Principal: Security.Authentication.Principal
+    . Grant: Security.Authorization.Grant.* // single or array
+    . Resource: Security.Authorization.SecureResource // single or array
+
+  urn:sec:Security.Authorization.System
+
+
+On Authorization Service First Boot:
+
+Create Security System
+  - ** Create Authorization System **
+    - urn:sec:Security.Authorization.System::ProcessProof
+
+    - ** Create Actions **
+      - security:*
+        - security:CreateUser
+        - security:ReadUser
+        - security:UpdateUser
+        - security:RemoveUser
+        - security:CreateUserGroup
+        - security:AddToUserGroup
+        - security:RemoveFromUserGroup
+        - security:RemoveUserGroup
+        - security:CreateAction
+        - security:RemoveAction
+        - security:CreateRole
+        - security:AddToRole
+        - security:RemoveFromRole
+        - security:RemoveRole
+        - security:CreateSecureResource
+        - security:RemoveSecureResource
+        - security:CreateResourceBelongsToRelation
+        - security:ManageResourceAccess
+        - security:GrantPermission
+        - security:RevokePermission
+
+    - ** Create Access Grant Permissions **
+
+      - Add users to these user groups. to easily allow users to grant permissions to other users
+
+        - urn:sec:Security.Authorization.Principal.UserGroup::SecurityAccessAdministrators
+          - urn:sec:Security.Authorization.Policy::SecurityAccessAdministrators
+            . Principal: urn:sec:Security.Authorization.Principal.UserGroup::SecurityAccessAdministrators
+            . Grant: [
+                urn:sec:Security.Authorization.Grant.Action::security:GrantPermission,
+                urn:sec:Security.Authorization.Grant.Action::security:RevokePermission,
+              ],
+            . Resource: [
+                urn:sec:Security.Authorization.Grant.Action::security:*
+              ]
+
+        - urn:sec:Security.Authorization.Principal.UserGroup::SystemAccessAdministrators
+          - urn:sec:Security.Authorization.Policy::SystemAccessAdministrators
+            . Principal: urn:sec:Security.Authorization.Principal.UserGroup::SystemAccessAdministrators
+            . Grant: [
+                urn:sec:Security.Authorization.Grant.Action::security:GrantPermission,
+                urn:sec:Security.Authorization.Grant.Action::security:RevokePermission,
+              ],
+            . Resource: [
+                urn:sec:Security.Authorization.Grant.Action::system:*
+              ]
+
+        - urn:sec:Security.Authorization.Principal.UserGroup::AccountAccessAdministrators
+          - urn:sec:Security.Authorization.Policy::AccountAccessAdministrators
+            . Principal: urn:sec:Security.Authorization.Principal.UserGroup::AccountAccessAdministrators
+            . Grant: [
+                urn:sec:Security.Authorization.Grant.Action::security:GrantPermission,
+                urn:sec:Security.Authorization.Grant.Action::security:RevokePermission,
+              ],
+            . Resource: [
+                urn:sec:Security.Authorization.Grant.Action::account:*,
+                urn:sec:Security.Authorization.Grant.Action::client:*,
+                urn:sec:Security.Authorization.Grant.Action::jobs:*,
+                urn:sec:Security.Authorization.Grant.Action::templates:*
+              ]
+
+    - ** Create Roles **
+      - urn:sec:Security.Authorization.Role::SecurityAdministration
+        . Actions:
+          - security:*
+      - urn:sec:Security.Authorization.Role::SystemAdministration
+        . Actions:
+          - system:*
+      - urn:sec:Security.Authorization.Role::AccountAdministration
+        . Actions:
+          - account:*
+          - client:*
+          - jobs:*
+          - templates:*
+
+    - ** Create Master Security Account **
+      - urn:sec:Security.Authorization.Principal.User::{new-security-master-user-uuid}
+        . Name: SecurityMaster
+        . Email: ${security-master-email}
+        . Password: ${security-master-password}
+        . Phone: ${security-master-phone}
+
+      - urn:sec:Security.Authorization.Policy::{new-security-master-policy-uuid}
+        . Principal: urn:sec:Security.Authorization.Principal.User::{new-security-master-user-uuid}
+        . Grant: [
+            urn:sec:Security.Authorization.Role::SecurityAdministration,
+          ]
+        . Resource: [
+            urn:sec:Security.Authorization.System::ProcessProof
+          ]
+      ** add this user to SecurityAccessAdministrators UserGroup
+
+
+
+
+
+Topaz vs OPA vs OpenFGA
+
+
 
 
 
@@ -158,10 +245,10 @@ ActionsByResourceType:
 			JobCollection
 				- jobs:*
 				- jobs:AdminJobCollections
-				- jobs:ListJobsCollections
+				- jobs:ListJobCollections
 				- jobs:ListJobs
-				- jobs:AddJobs
-				- jobs:RemoveJobs
+        - jobs:AddJobToCollection
+				- jobs:RemoveJobFromCollection
 				- jobs:ListJobsCreatedBySelf
 				- jobs:ListJobsAssignedToSelf
 
@@ -211,6 +298,10 @@ On first boot:
 	A. Create Actions (see above)
 
 	B. Create Roles:
+	- urn:pp:Security.Role::SecurityAdmin
+	  . Name: SecurityAdministrator
+    - urn:pp:Security.Action::security:*
+
 	- urn:pp:Security.Role::SystemAdmin
 		. Name: SystemAdministrator
 
@@ -223,10 +314,11 @@ On first boot:
 	- urn:pp:Security.Role::AccountAdmin
 		. Name AccountAdministrator
 
-		- urn:pp:Security.Action::security:ManagePolicy
+		- urn:pp:Security.Action::security:ManageAccountResourcePolicy
 		- urn:pp:Security.Action::account:*
 		- urn:pp:Security.Action::client:*
 		- urn:pp:Security.Action::jobs:*
+		- urn:pp:Security.Action::templates:*
 
 	C. Create System Owner Account
 		- urn:pp:Security.User::{system-owner-user-uuid}

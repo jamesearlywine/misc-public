@@ -62,7 +62,8 @@ Security:
     urn:sec:Security.Authorization.Permission.Action
     urn:sec:Security.Authorization.Permission.Role // collection of Action
       - Actions?: Security.Authorization.Permission.Action[] // collection of Actions principal may perform
-      - Roles?: Security.Authorization.Permission.Role[] // collection of Roles assigned to principal
+      - Roles?: Security.Authorization.Permission.Role[]  // collection of Roles assigned to principal
+                                                          // (recursive up to 5 layers deep)
 
     urn:sec:Security.Authorization.Grant
       . Principal: Security.Authentication.Principal.* // single or array
@@ -104,33 +105,20 @@ Security:
         - Add users to these user groups. to easily allow users to grant permissions to other users
 
           - urn:sec:Security.Authorization.Principal.UserGroup::SecurityAccessAdministrators
-            - urn:sec:Security.Authorization.ResourcePermission::SecurityAccessAdministrators
+            - urn:sec:Security.Authorization.Grant::SecurityAccessAdministrators
               . Principal: urn:sec:Security.Authorization.Principal.UserGroup::SecurityAccessAdministrators
-              . Permission: [
-                  urn:sec:Security.Authorization.Permission.Action::security:PermissionPermission,
-                  urn:sec:Security.Authorization.Permission.Action::security:RevokePermission,
-                ],
-              . Resource: [
-                  urn:sec:Security.Authorization.Permission.Action::security:*
-                ]
+              . Permission: urn:sec:Security.Authorization.Permission.Action::security:ManageResourcePermissions,
+              . Resource: urn:sec:Security.Authorization.Permission.Action::security:*
 
           - urn:sec:Security.Authorization.Principal.UserGroup::SystemAccessAdministrators
             . Principal: urn:sec:Security.Authorization.Principal.UserGroup::SystemAccessAdministrators
-            . Permission: [
-                urn:sec:Security.Authorization.Permission.Action::security:PermissionPermission,
-                urn:sec:Security.Authorization.Permission.Action::security:RevokePermission,
-              ],
-            . Resource: [
-                urn:sec:Security.Authorization.Permission.Action::system:*
-              ]
+            . Permission: urn:sec:Security.Authorization.Permission.Action::security:ManageResourcePermissions,
+            . Resource: urn:sec:Security.Authorization.Permission.Action::system:*
 
           - urn:sec:Security.Authorization.Principal.UserGroup::AccountAccessAdministrators
-            - urn:sec:Security.Authorization.Policy::AccountAccessAdministrators
+            - urn:sec:Security.Authorization.Grant::AccountAccessAdministrators
               . Principal: urn:sec:Security.Authorization.Principal.UserGroup::AccountAccessAdministrators
-              . Permission: [
-                  urn:sec:Security.Authorization.Permission.Action::security:PermissionPermission,
-                  urn:sec:Security.Authorization.Permission.Action::security:RevokePermission,
-                ],
+              . Permission: urn:sec:Security.Authorization.Permission.Action::security:ManageResourcePermissions,
               . Resource: [
                   urn:sec:Security.Authorization.Permission.Action::account:*,
                   urn:sec:Security.Authorization.Permission.Action::client:*,
@@ -150,14 +138,10 @@ Security:
           . Password: ${security-master-password}
           . Phone: ${security-master-phone}
 
-        - urn:sec:Security.Authorization.Policy::{new-security-master-policy-uuid}
+        - urn:sec:Security.Authorization.Grant::{some-uuid}
           . Principal: urn:sec:Security.Authorization.Principal.User::{new-security-master-user-uuid}
-          . Permission: [
-              urn:sec:Security.Authorization.Role::SecurityAdministration,
-            ]
-          . Resource: [
-              urn:sec:Security.Authorization.System::ProcessProof
-            ]
+          . Permission: urn:sec:Security.Authorization.Permission.Role::SecurityAdministration,
+          . Resource: urn:sec:Security.Authorization.System::ProcessProof
         ** add this user to SecurityAccessAdministrators UserGroup
 
 
@@ -284,10 +268,10 @@ Security:
 
     C. Create System Owner Account
       - urn:pp:Security.Authorization.Principal.User::{system-owner-user-uuid}
-      - urn:pp:Security.Authorization.Policy::{system-owner-policy-uuid}
+      - urn:pp:Security.Authorization.Grant::{system-owner-policy-uuid}
         . Principal: urn:pp:Security.Principal.User::${system-owner-user-uuid}
         . Resource: urn:pp:System::${new-system-uuid}
-        . Permission: urn:pp:Security.Authorization.Role::SystemAdmin
+        . Permission: urn:pp:Security.Authorization.Permission.Role::SystemAdmin
       ** add this user to SystemAccessAdministrators UserGroup
 
     D. Initialize System.Templates (data-store + file-hosting) for document-generation-service
@@ -313,7 +297,7 @@ Security:
     ** add this user to AccountAccessAdministrators UserGroup
 
   // grant to AccountAdministrators UserGroup, AccountAdministrator Role, for newly created account
-  - urn:pp:Security.Authorization.Policy
+  - urn:pp:Security.Authorization.Grant
     . Principal: urn:pp:Security.Principal.UserGroup::${account-administrators-usergroup-uuid}
     . Permission: Security.Role::AccountAdministrator
     . Resource: urn:pp:System.Account::${new-account-uuid}

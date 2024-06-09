@@ -1,16 +1,3 @@
-Principals:
-urn:pp:Security.Principal.User
-urn:pp:Security.Principal.UserGroup
-
-Actions:
-Action
-Role - group of actions
-
-Resource
-ResourceCollection - group of resources (non-identifying)
-
-
-
 ProcessProof URN Format:
 urn:{systemNamespace}:{resourceType}::{resourceIdentifier}
 
@@ -28,331 +15,308 @@ Security Notes:
 	- system ownership of a resource, can be found by tracing up the graph to find System
 	- System is recursion terminator, in determining the tree of parent resources, for which a user may be granted permission to act upon that resource
   - action is the recursion terminator, in determining the tree of roles assigned, to derive the flatmap of actions that a user may perform
+  - build or buy? -- Topaz vs OPA vs OpenFGA
+
 
 Resource Notes:
 - collections are n:n by reference, non-identifying, unless otherwise indicated
 
+ProcessProof Resource Types:
+  SystemResourceTypes:
+    urn:pp:System
+    urn:pp:System.Template.Affidavit
+
+  AccountResourceTypes:
+    urn:pp:System.Account
+    urn:pp:System.Account.Details
+    urn:pp:System.Account.Profile
+    urn:pp:System.Account.JobCollection
+    urn:pp:System.Account.Job
+      urn:pp:System.Account.Job.ServiceAttempt
+      urn:pp:System.Account.Job.ServiceAffidavit
+      urn:pp:System.Account.Job.JobServiceRequest
+      urn:pp:System.Account.Job.JobServiceAgreement
+    urn:pp:System.Account.Client
+      urn:pp:System.Account.Client.Contact
+      urn:pp:System.Account.Client.PaymentMethod
+    urn:pp:System.Account.Template.ServiceAffidavit
+
+    #v2 // these will map to corresponding urn:sec:Security.* entities
+    urn:pp:System.Account.Security.Role
+    urn:pp:System.Account.Security.UserGroup
 
 
-SecurityResourceTypes:
-  urn:sec:Security.Authentication.Principal.User
-  urn:sec:Security.Authentication.Principal.UserGroup // collection of User
-  urn:sec:Security.Authentication.Principal.Session
-
-  urn:sec:Security.Authorization.SecureResource // id is corresponding resource urn
-
-  urn:sec:Security.Authorization.Grant.Action
-  urn:sec:Security.Authorization.Grant.Role // collection of Action
-    - Actions: Security.Authorization.Grant.Action[] // collection of Actions user may perform
-
-  urn:sec:Security.Authorization.Policy
-    . Principal: Security.Authentication.Principal
-    . Grant: Security.Authorization.Grant.* // single or array
-    . Resource: Security.Authorization.SecureResource // single or array
-
-  urn:sec:Security.Authorization.System
 
 
-On Authorization Service First Boot:
 
-Create Security System
-  - ** Create Authorization System **
-    - urn:sec:Security.Authorization.System::ProcessProof
 
-    - ** Create Actions **
-      - security:*
-        - security:CreateUser
-        - security:ReadUser
-        - security:UpdateUser
-        - security:RemoveUser
-        - security:CreateUserGroup
-        - security:AddToUserGroup
-        - security:RemoveFromUserGroup
-        - security:RemoveUserGroup
-        - security:CreateAction
-        - security:RemoveAction
-        - security:CreateRole
-        - security:AddToRole
-        - security:RemoveFromRole
-        - security:RemoveRole
-        - security:CreateSecureResource
-        - security:RemoveSecureResource
-        - security:CreateResourceBelongsToRelation
-        - security:ManageResourceAccess
-        - security:GrantPermission
-        - security:RevokePermission
+Security:
 
-    - ** Create Access Grant Permissions **
+  SecurityResourceTypes:
+    urn:sec:Security.Authentication.Principal.User
+    urn:sec:Security.Authentication.Principal.UserGroup // collection of User
+    urn:sec:Security.Authentication.Principal.Session
 
-      - Add users to these user groups. to easily allow users to grant permissions to other users
+    urn:sec:Security.Authorization.SecureResource // id is corresponding resource urn
 
-        - urn:sec:Security.Authorization.Principal.UserGroup::SecurityAccessAdministrators
-          - urn:sec:Security.Authorization.Policy::SecurityAccessAdministrators
-            . Principal: urn:sec:Security.Authorization.Principal.UserGroup::SecurityAccessAdministrators
-            . Grant: [
-                urn:sec:Security.Authorization.Grant.Action::security:GrantPermission,
-                urn:sec:Security.Authorization.Grant.Action::security:RevokePermission,
-              ],
-            . Resource: [
-                urn:sec:Security.Authorization.Grant.Action::security:*
-              ]
+    urn:sec:Security.Authorization.Permission.Action
+    urn:sec:Security.Authorization.Permission.Role // collection of Action
+      - Actions?: Security.Authorization.Permission.Action[] // collection of Actions principal may perform
+      - Roles?: Security.Authorization.Permission.Role[] // collection of Roles assigned to principal
 
-        - urn:sec:Security.Authorization.Principal.UserGroup::SystemAccessAdministrators
-          - urn:sec:Security.Authorization.Policy::SystemAccessAdministrators
+    urn:sec:Security.Authorization.Grant
+      . Principal: Security.Authentication.Principal.* // single or array
+      . Permission: Security.Authorization.Permission.* // single or array
+      . Resource: Security.Authorization.SecureResource.* // single or array
+
+    urn:sec:Security.Authorization.System
+
+
+  On Authorization Service First Boot:
+
+  Create Security System
+    - ** Create Authorization System **
+      - urn:sec:Security.Authorization.System::ProcessProof
+
+      - ** Create Actions **
+        - security:*
+          - urn:pp:Security.Authorization.Permission.Action::security:CreateUser
+          - urn:pp:Security.Authorization.Permission.Action::security:ReadUser
+          - urn:pp:Security.Authorization.Permission.Action::security:UpdateUser
+          - urn:pp:Security.Authorization.Permission.Action::security:RemoveUser
+          - urn:pp:Security.Authorization.Permission.Action::security:CreateUserGroup
+          - urn:pp:Security.Authorization.Permission.Action::security:AddToUserGroup
+          - urn:pp:Security.Authorization.Permission.Action::security:RemoveFromUserGroup
+          - urn:pp:Security.Authorization.Permission.Action::security:RemoveUserGroup
+          - urn:pp:Security.Authorization.Permission.Action::security:CreateAction
+          - urn:pp:Security.Authorization.Permission.Action::security:RemoveAction
+          - urn:pp:Security.Authorization.Permission.Action::security:CreateRole
+          - urn:pp:Security.Authorization.Permission.Action::security:AddToRole
+          - urn:pp:Security.Authorization.Permission.Action::security:RemoveFromRole
+          - urn:pp:Security.Authorization.Permission.Action::security:RemoveRole
+          - urn:pp:Security.Authorization.Permission.Action::security:CreateSecureResource
+          - urn:pp:Security.Authorization.Permission.Action::security:RemoveSecureResource
+          - urn:pp:Security.Authorization.Permission.Action::security:CreateResourceBelongsToRelation
+          - urn:pp:Security.Authorization.Permission.Action::security:ManageResourcePermissions
+
+      - ** Create Access Permission Permissions **
+
+        - Add users to these user groups. to easily allow users to grant permissions to other users
+
+          - urn:sec:Security.Authorization.Principal.UserGroup::SecurityAccessAdministrators
+            - urn:sec:Security.Authorization.ResourcePermission::SecurityAccessAdministrators
+              . Principal: urn:sec:Security.Authorization.Principal.UserGroup::SecurityAccessAdministrators
+              . Permission: [
+                  urn:sec:Security.Authorization.Permission.Action::security:PermissionPermission,
+                  urn:sec:Security.Authorization.Permission.Action::security:RevokePermission,
+                ],
+              . Resource: [
+                  urn:sec:Security.Authorization.Permission.Action::security:*
+                ]
+
+          - urn:sec:Security.Authorization.Principal.UserGroup::SystemAccessAdministrators
             . Principal: urn:sec:Security.Authorization.Principal.UserGroup::SystemAccessAdministrators
-            . Grant: [
-                urn:sec:Security.Authorization.Grant.Action::security:GrantPermission,
-                urn:sec:Security.Authorization.Grant.Action::security:RevokePermission,
+            . Permission: [
+                urn:sec:Security.Authorization.Permission.Action::security:PermissionPermission,
+                urn:sec:Security.Authorization.Permission.Action::security:RevokePermission,
               ],
             . Resource: [
-                urn:sec:Security.Authorization.Grant.Action::system:*
+                urn:sec:Security.Authorization.Permission.Action::system:*
               ]
 
-        - urn:sec:Security.Authorization.Principal.UserGroup::AccountAccessAdministrators
-          - urn:sec:Security.Authorization.Policy::AccountAccessAdministrators
-            . Principal: urn:sec:Security.Authorization.Principal.UserGroup::AccountAccessAdministrators
-            . Grant: [
-                urn:sec:Security.Authorization.Grant.Action::security:GrantPermission,
-                urn:sec:Security.Authorization.Grant.Action::security:RevokePermission,
-              ],
-            . Resource: [
-                urn:sec:Security.Authorization.Grant.Action::account:*,
-                urn:sec:Security.Authorization.Grant.Action::client:*,
-                urn:sec:Security.Authorization.Grant.Action::jobs:*,
-                urn:sec:Security.Authorization.Grant.Action::templates:*
-              ]
+          - urn:sec:Security.Authorization.Principal.UserGroup::AccountAccessAdministrators
+            - urn:sec:Security.Authorization.Policy::AccountAccessAdministrators
+              . Principal: urn:sec:Security.Authorization.Principal.UserGroup::AccountAccessAdministrators
+              . Permission: [
+                  urn:sec:Security.Authorization.Permission.Action::security:PermissionPermission,
+                  urn:sec:Security.Authorization.Permission.Action::security:RevokePermission,
+                ],
+              . Resource: [
+                  urn:sec:Security.Authorization.Permission.Action::account:*,
+                  urn:sec:Security.Authorization.Permission.Action::client:*,
+                  urn:sec:Security.Authorization.Permission.Action::jobs:*,
+                  urn:sec:Security.Authorization.Permission.Action::templates:*
+                ]
 
-    - ** Create Roles **
-      - urn:sec:Security.Authorization.Role::SecurityAdministration
-        . Actions:
-          - security:*
-      - urn:sec:Security.Authorization.Role::SystemAdministration
-        . Actions:
-          - system:*
-      - urn:sec:Security.Authorization.Role::AccountAdministration
-        . Actions:
-          - account:*
-          - client:*
-          - jobs:*
-          - templates:*
+      - ** Create Roles **
+        - urn:sec:Security.Authorization.Permission.Role::SecurityAdministration
+          . Actions:
+            - security:*
 
-    - ** Create Master Security Account **
-      - urn:sec:Security.Authorization.Principal.User::{new-security-master-user-uuid}
-        . Name: SecurityMaster
-        . Email: ${security-master-email}
-        . Password: ${security-master-password}
-        . Phone: ${security-master-phone}
+      - ** Create Master Security Account **
+        - urn:sec:Security.Authorization.Principal.User::{new-security-master-user-uuid}
+          . Name: SecurityMaster
+          . Email: ${security-master-email}
+          . Password: ${security-master-password}
+          . Phone: ${security-master-phone}
 
-      - urn:sec:Security.Authorization.Policy::{new-security-master-policy-uuid}
-        . Principal: urn:sec:Security.Authorization.Principal.User::{new-security-master-user-uuid}
-        . Grant: [
-            urn:sec:Security.Authorization.Role::SecurityAdministration,
-          ]
-        . Resource: [
-            urn:sec:Security.Authorization.System::ProcessProof
-          ]
-      ** add this user to SecurityAccessAdministrators UserGroup
+        - urn:sec:Security.Authorization.Policy::{new-security-master-policy-uuid}
+          . Principal: urn:sec:Security.Authorization.Principal.User::{new-security-master-user-uuid}
+          . Permission: [
+              urn:sec:Security.Authorization.Role::SecurityAdministration,
+            ]
+          . Resource: [
+              urn:sec:Security.Authorization.System::ProcessProof
+            ]
+        ** add this user to SecurityAccessAdministrators UserGroup
 
 
 
 
 
-Topaz vs OPA vs OpenFGA
+  On first boot:
+
+  1. Create System:
+  - urn:pp:System::{new-system-uuid}
+
+  2. Create Security Resources for System
+    A. Create Actions for all Resource Types (see above)
+        ActionsByResourceType:
+          System
+            - system:*
+            - system:Admin
+            - system:CreateAccount
+            - system:UpdateAccount
+            - system:DeactivateAccount
+            - system:ActivateAccount
+            - system:RemoveAccount
+
+            Template
+              - templates:admin
+
+            Account
+              - account:*
+              - account:Create
+              - account:Admin
+              - account:UpdateDetails
+              - account:UpdateProfile
+
+              ## v2, custom access controls for account resources
+              Security
+              - account:CreateRole
+              - account:AddToRole # only actions: account:* client:* jobs:* templates:*
+              - account:RemoveFromRole
+              - account:RemoveRole
+              - account:CreateUserGroup
+              - account:AddToUserGroup # any user
+              - account:RemoveFromUserGroup
+              - account:RemoveUserGroup
+              - account:ManagePolicy ## only for Resources that are children of this Account, any UserGroup any User
+
+              ** System.Account.Security.* notes:
+                - UserGroups and UserRoles will have AccountId membership
+                - Will have human readable names, but system ID will be:
+                  - ${account-uuid}--role-name
+                  - ${account-uuid}--usergroup-name
+
+
+              Client
+                - client:*
+                - client:ListClients
+                - client:WriteClient
+                - client:ReadClient
+                - client:RemoveClient
+
+                Contact
+                - client:WriteContact
+                - client:RemoveContact
+
+                PaymentMethod
+                - client:WritePaymentMethod
+                - client:RemovePaymentMethod
+
+              JobCollection
+                - jobs:*
+                - jobs:AdminJobCollections
+                - jobs:ListJobCollections
+                - jobs:ListJobs
+                - jobs:AddJobToCollection
+                - jobs:RemoveJobFromCollection
+                - jobs:ListJobsCreatedBySelf
+                - jobs:ListJobsAssignedToSelf
+
+                  Job
+                  - jobs:WriteJob
+                  - jobs:ReadJob
+                  - jobs:RemoveJob
+                  - jobs:RemoveJobCreatedBySelf
+                  - jobs:RequestProcessServer
+                  - jobs:RequestJobAssignment
+                  - jobs:Assign
+                  - jobs:Unassign
+                  - jobs:AssignToSelf
+                  - jobs:UnassignToSelf
+
+                  ServiceRequest
+                    - jobs:CreateServiceRequest
+                    - jobs:AcceptServiceRequest
+                    - jobs:CreateJobRequest
+                    - jobs:AcceptJobRequest
+                    - jobs:ReadServiceAgreementInvolvingSelf
+
+                  ServiceAttempt
+                    - jobs:AddServiceAttempt
+                    - jobs:RemoveServiceAttempt
+                    - jobs:RemoveServiceAttemptCreatedBySelf
+
+                  Affidavit
+                    - jobs:GenerateServiceAffidavit
+                    - jobs:GenerateServiceAffidavitForJobServicedBySelf
+                    - jobs:RemoveServiceAffidavit
+                    - jobs:RemoveServiceAffidavitCreatedBySelf
+
+              Templates
+                - templates:Admin
+
+            ## end of Account section
+
+    B. Create Roles:
+        - urn:sec:Security.Authorization.Permission.Role::SystemAdministration
+          . Actions:
+            - system:*
+
+        - urn:sec:Security.Authorization.Permission.Role::AccountAdministration
+          . Actions:
+            - account:*
+            - client:*
+            - jobs:*
+            - templates:*
+
+    C. Create System Owner Account
+      - urn:pp:Security.Authorization.Principal.User::{system-owner-user-uuid}
+      - urn:pp:Security.Authorization.Policy::{system-owner-policy-uuid}
+        . Principal: urn:pp:Security.Principal.User::${system-owner-user-uuid}
+        . Resource: urn:pp:System::${new-system-uuid}
+        . Permission: urn:pp:Security.Authorization.Role::SystemAdmin
+      ** add this user to SystemAccessAdministrators UserGroup
+
+    D. Initialize System.Templates (data-store + file-hosting) for document-generation-service
 
 
 
+  New User Creation:
+  ** indentation represents (non-identifying) relationships stored in graph
 
+  // create account
+  - urn:pp:System.Account::${new-account-uuid}
+    - urn:pp:System.Account.Details::${new-account-details-uuid}
+    - urn:pp:System.Account.Profile::${new-account-profile-uuid}
+    - urn:pp:System.Account.JobCollection::${new-account-job-collection-uuid}
 
-SystemResourceTypes:
-  urn:pp:System
-  urn:pp:System.Template.Affidavit
+  // create Account Administrators UserGroup
+  - urn:pp:Security.Authorization.Principal.UserGroup::${account-administrators-usergroup-uuid}
+    . DisplayName: Account Administrators
+    . AccountId: ${new-account-uuid}
 
-AccountResourceTypes:
-  urn:pp:System.Account
-  urn:pp:System.Account.Details
-  urn:pp:System.Account.Profile
-  urn:pp:System.Account.JobCollection
-  urn:pp:System.Account.Job
-  urn:pp:System.Account.Job.ServiceAttempt
-  urn:pp:System.Account.Job.ServiceAffidavit
-  urn:pp:System.Account.Job.JobServiceRequest
-  urn:pp:System.Account.Job.JobServiceAgreement
-  urn:pp:System.Account.Client
-  urn:pp:System.Account.Client.Contact
-  urn:pp:System.Account.Client.PaymentMethod
-  urn:pp:System.Account.Template.ServiceAffidavit
+  // create User and assign them to Account Administrators UserGroup
+    - urn:pp:Security.Authorization.Principal.User::${new-user-uuid}
+    ** add this user to AccountAccessAdministrators UserGroup
 
-  #v2 // these will map to corresponding urn:sec:Security.* entities
-  urn:pp:System.Account.Security.Role
-  urn:pp:System.Account.Security.UserGroup
-
-
-
-ActionsByResourceType:
-	System
-		- system:*
-		- system:Admin
-		- system:CreateAccount
-		- system:UpdateAccount
-		- system:DeactivateAccount
-		- system:ActivateAccount
-		- system:RemoveAccount
-
-		Template
-			- templates:admin
-
-		Account
-			- account:*
-			- account:Create
-			- account:Admin
-			- account:UpdateDetails
-			- account:UpdateProfile
-
-			## v2, custom access controls for account resources
-			Security
-			- account:CreateRole
-			- account:AddToRole # only actions: account:* client:* jobs:* templates:*
-			- account:RemoveFromRole
-			- account:RemoveRole
-			- account:CreateUserGroup
-			- account:AddToUserGroup # any user
-			- account:RemoveFromUserGroup
-			- account:RemoveUserGroup
-			- account:ManagePolicy ## only for Resources that are children of this Account, any UserGroup any User
-
-			** System.Account.Security.* notes:
-				- UserGroups and UserRoles will have AccountId membership
-				- Will have human readable names, but system ID will be:
-					- ${account-uuid}--role-name
-					- ${account-uuid}--usergroup-name
-
-
-			Client
-				- client:*
-				- client:ListClients
-				- client:WriteClient
-				- client:ReadClient
-				- client:RemoveClient
-
-				Contact
-				- client:WriteContact
-				- client:RemoveContact
-
-				PaymentMethod
-				- client:WritePaymentMethod
-				- client:RemovePaymentMethod
-
-			JobCollection
-				- jobs:*
-				- jobs:AdminJobCollections
-				- jobs:ListJobCollections
-				- jobs:ListJobs
-        - jobs:AddJobToCollection
-				- jobs:RemoveJobFromCollection
-				- jobs:ListJobsCreatedBySelf
-				- jobs:ListJobsAssignedToSelf
-
-					Job
-					- jobs:WriteJob
-					- jobs:ReadJob
-					- jobs:RemoveJob
-					- jobs:RemoveJobCreatedBySelf
-					- jobs:RequestProcessServer
-					- jobs:RequestJobAssignment
-					- jobs:Assign
-					- jobs:Unassign
-					- jobs:AssignToSelf
-					- jobs:UnassignToSelf
-
-					ServiceRequest
-						- jobs:CreateServiceRequest
-						- jobs:AcceptServiceRequest
-						- jobs:CreateJobRequest
-						- jobs:AcceptJobRequest
-						- jobs:ReadServiceAgreementInvolvingSelf
-
-					ServiceAttempt
-						- jobs:AddServiceAttempt
-						- jobs:RemoveServiceAttempt
-						- jobs:RemoveServiceAttemptCreatedBySelf
-
-					Affidavit
-						- jobs:GenerateServiceAffidavit
-						- jobs:GenerateServiceAffidavitForJobServicedBySelf
-						- jobs:RemoveServiceAffidavit
-						- jobs:RemoveServiceAffidavitCreatedBySelf
-
-			Templates
-				- templates:Admin
-
-		## end of Account section
-
-
-
-On first boot:
-
-1. Create system:
-- urn:pp:System::{new-system-uuid}
-
-2. Create Security System
-	A. Create Actions (see above)
-
-	B. Create Roles:
-	- urn:pp:Security.Role::SecurityAdmin
-	  . Name: SecurityAdministrator
-    - urn:pp:Security.Action::security:*
-
-	- urn:pp:Security.Role::SystemAdmin
-		. Name: SystemAdministrator
-
-		- urn:pp:Security.Action::security:*
-		- urn:pp:Security.Action::system:*
-		- urn:pp:Security.Action::account:*
-		- urn:pp:Security.Action::client:*
-		- urn:pp:Security.Action::jobs:*
-
-	- urn:pp:Security.Role::AccountAdmin
-		. Name AccountAdministrator
-
-		- urn:pp:Security.Action::security:ManageAccountResourcePolicy
-		- urn:pp:Security.Action::account:*
-		- urn:pp:Security.Action::client:*
-		- urn:pp:Security.Action::jobs:*
-		- urn:pp:Security.Action::templates:*
-
-	C. Create System Owner Account
-		- urn:pp:Security.User::{system-owner-user-uuid}
-		- urn:pp:Security.Policy::{system-owner-policy-uuid}
-			. Principal: urn:pp:Security.Principal.User::${system-owner-user-uuid}
-			. Resource: urn:pp:System::${new-system-uuid}
-			. Grant: urn:pp:Security.Role::SystemAdmin
-
-	D. Initialize System.Templates (data-store + file-hosting) for document-generation-service
-
-
-
-New User Creation:
-** indentation represents (non-identifying) relationships stored in graph
-
-// create account
-- urn:pp:System.Account::${new-account-uuid}
-	- urn:pp:System.Account.Details::${new-account-details-uuid}
-	- urn:pp:System.Account.Profile::${new-account-profile-uuid}
-	- urn:pp:System.Account.JobCollection::${new-account-job-collection-uuid}
-
-// create Account Administrators UserGroup
-- urn:pp:Security.Principal.UserGroup::${account-administrators-usergroup-uuid}
-	. DisplayName: Account Administrators
-	. AccountId: ${new-account-uuid}
-
-// create User and assign them to Account Administrators UserGroup
-	- urn:pp:Security.Principal.User::${new-user-uuid}
-
-// grant to AccountAdministrators UserGroup, AccountAdministrator Role, for newly created account
-- urn:pp:Security.Policy
-	. Principal: urn:pp:Security.Principal.UserGroup::${account-administrators-usergroup-uuid}
-	. Grant: Security.Role::AccountAdministrator
-	. Resource: urn:pp:System.Account::${new-account-uuid}
+  // grant to AccountAdministrators UserGroup, AccountAdministrator Role, for newly created account
+  - urn:pp:Security.Authorization.Policy
+    . Principal: urn:pp:Security.Principal.UserGroup::${account-administrators-usergroup-uuid}
+    . Permission: Security.Role::AccountAdministrator
+    . Resource: urn:pp:System.Account::${new-account-uuid}
 
 
 

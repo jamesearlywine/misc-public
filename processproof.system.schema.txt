@@ -240,11 +240,11 @@ Security:
             - templates:*
 
     C. Create System Owner Account
-      - urn:sec:urity.Authorization.Principal.User::{system-owner-user-uuid}
-      - urn:sec:urity.Authorization.Grant::{system-owner-policy-uuid}
-        . Principal: urn:sec:urity.Principal.User::${system-owner-user-uuid}
+      - urn:sec:Security.Authorization.Principal.User::{system-owner-user-uuid}
+      - urn:sec:Security.Authorization.Grant::{system-owner-policy-uuid}
+        . Principal: urn:sec:Security.Principal.User::${system-owner-user-uuid}
         . Resource: urn:pp:System::${new-system-uuid}
-        . Permission: urn:sec:urity.Authorization.Permission.Role::SystemAdmin
+        . Permission: urn:sec:Security.Authorization.Permission.Role::SystemAdmin
       ** add this user to SystemAccessAdministrators UserGroup
 
     D. Initialize System.Templates (data-store + file-hosting) for document-generation-service
@@ -261,17 +261,17 @@ Security:
     - urn:pp:System.Account.JobCollection::${new-account-job-collection-uuid}
 
   // create Account Administrators UserGroup
-  - urn:sec:urity.Authorization.Principal.UserGroup::${account-administrators-usergroup-uuid}
+  - urn:sec:Security.Authorization.Principal.UserGroup::${account-administrators-usergroup-uuid}
     . DisplayName: Account Administrators
     . AccountId: ${new-account-uuid}
 
   // create User and assign them to Account Administrators UserGroup
-    - urn:sec:urity.Authorization.Principal.User::${new-user-uuid}
+    - urn:sec:Security.Authorization.Principal.User::${new-user-uuid}
     ** add this user to AccountAccessAdministrators UserGroup
 
   // grant to AccountAdministrators UserGroup, AccountAdministrator Role, for newly created account
-  - urn:sec:urity.Authorization.Grant
-    . Principal: urn:sec:urity.Principal.UserGroup::${account-administrators-usergroup-uuid}
+  - urn:sec:Security.Authorization.Grant
+    . Principal: urn:sec:Security.Principal.UserGroup::${account-administrators-usergroup-uuid}
     . Permission: Security.Role::AccountAdministrator
     . Resource: urn:pp:System.Account::${new-account-uuid}
 

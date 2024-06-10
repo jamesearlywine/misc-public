@@ -67,7 +67,7 @@ Security:
 
     Security.Authorization.Grant.Type.Act
     Security.Authorization.Grant.Type.Permit
-    Security.Authorization.Grant.Type.Trust
+    Security.Authorization.Grant.Type.Own
 
     urn:sec:Security.Authorization.Grant
       . Type: Security.Authorization.Grant.Type.*
@@ -102,7 +102,7 @@ Security:
         - urn:sec:Security.Authorization.Permission.Action::security:CreateResourceBelongsToRelation
         - urn:sec:Security.Authorization.Permission.Action::security:ManageGrantToAct
         - urn:sec:Security.Authorization.Permission.Action::security:ManageGrantToPermit
-        - urn:sec:Security.Authorization.Permission.Action::security:ManageGrantToTrust
+        - urn:sec:Security.Authorization.Permission.Action::security:ManageGrantToOwn
 
       - ** Create Roles **
       - urn:sec:Security.Authorization.Permission.Role::SecurityAdministration
@@ -112,8 +112,9 @@ Security:
       - ** Create UserGroup **
       - urn:sec:Security.Authorization.Principal.UserGroup::SecurityAccessAdministrators
 
-      - ** Create Authorization Grant **
+      - ** Create Authorization Grants **
       - urn:sec:Security.Authorization.Grant::SecurityAccessAdministrators
+        . Type: Security.Authorization.Grant.Type.Action
         . Principal: urn:sec:Security.Authorization.Principal.UserGroup::SecurityAccessAdministrators
         . Permission: urn:sec:Security.Authorization.Permission.Role::SecurityAdministration
         . Resource: [
@@ -125,6 +126,35 @@ Security:
           urn:sec:Security.Authentication.Principal.UserGroup::*
           urn:sec:Security.Authentication.Session::*
         ]
+
+      - urn:sec:Security.Authorization.Grant::SecurityAccessAdministrators
+        . Type: Security.Authorization.Grant.Type.Permit
+        . Principal: urn:sec:Security.Authorization.Principal.UserGroup::SecurityAccessAdministrators
+        . Permission: urn:sec:Security.Authorization.Permission.Role::SecurityAdministration
+        . Resource: [
+          urn:sec:Security.Authorization.SecureResource::*
+          urn:sec:Security.Authorization.Permission.Action::*
+          urn:sec:Security.Authorization.Permission.Role::*
+          urn:sec:Security.Authorization.Grant::*
+          urn:sec:Security.Authentication.Principal.User::*
+          urn:sec:Security.Authentication.Principal.UserGroup::*
+          urn:sec:Security.Authentication.Session::*
+        ]
+
+      - urn:sec:Security.Authorization.Grant::SecurityAccessAdministrators
+      . Type: Security.Authorization.Grant.Type.Own
+        . Principal: urn:sec:Security.Authorization.Principal.UserGroup::SecurityAccessAdministrators
+        . Resource: [
+          urn:sec:Security.Authorization.SecureResource::*
+          urn:sec:Security.Authorization.Permission.Action::*
+          urn:sec:Security.Authorization.Permission.Role::*
+          urn:sec:Security.Authorization.Grant::*
+          urn:sec:Security.Authentication.Principal.User::*
+          urn:sec:Security.Authentication.Principal.UserGroup::*
+          urn:sec:Security.Authentication.Session::*
+        ]
+
+
 
       - ** Create Master Security Account **
       - urn:sec:Security.Authorization.Principal.User::{new-security-master-user-uuid}

@@ -1,0 +1,60 @@
+## Generic OPA Policy for ProcessProof:
+package envoy
+
+import rego.v1
+
+default allow := false
+
+## resource owners can do whatever they want with the resource
+allow if {
+  input.user == input.resource.owner
+}
+
+## an explicit grant permitting that action for that resource
+allow if {
+  input.action in input.granted_resource_permissions
+}
+
+## an explicit grant permitting all actions in that action-group, for that resource
+allow if {
+  action_group_all_actions in input.granted_resource_permissions
+}
+
+## an explicit grant permitting action for resource created by self
+allow if {
+  action_for_resources_created_by_self in input.granted_resource_permissions
+  input.user == input.resource.creator
+}
+
+action_group := split(input.action, ":")[0]
+
+action_group_all_actions := concat(":", [action_group, "*"])
+
+action_for_resources_created_by_self := concat("", [input.action, "CreatedBySelf"])
+
+
+
+
+Example #1
+Auth request:
+{
+  "user": "james@esilogix.com",
+  "action": "jobs:WriteJob",
+  "resource": {
+    "type": "Resource.Job",
+    "creator": "james@esilogix.com",
+    "owner": "someoneelse@esilogix.com"
+  },
+  "granted_resource_permissions": [
+    "jobs:ReadJob",
+    "jobs:WriteJobCreatedBySelf"
+  ]
+}
+
+Auth Response:
+{
+  "action_for_resources_created_by_self": "jobs:WriteJobCreatedBySelf",
+  "action_group": "jobs",
+  "action_group_all_actions": "jobs:*",
+  "allow": true
+}

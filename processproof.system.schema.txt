@@ -65,12 +65,15 @@ Security:
         urn:sec:Security.Authentication.Session
     urn:sec:Security.Authentication.Principal.UserGroup // collection of User
 
+    Security.Authorization.Grant.Type.Act
+    Security.Authorization.Grant.Type.Permit
+    Security.Authorization.Grant.Type.Trust
+
     urn:sec:Security.Authorization.Grant
-      . Principal: Security.Authentication.Principal.* // single or array
-      . Permission: Security.Authorization.Permission.* // single or array
-      . Resource: Security.Authorization.SecureResource.* // single or array
-
-
+      . Type: Security.Authorization.Grant.Type.*
+      . Principal[]: Security.Authentication.Principal.*
+      . Permission[]: Security.Authorization.Permission.*
+      . Resource[]: Security.Authorization.SecureResource.*
 
 
   On Authorization Service First Boot:
@@ -85,19 +88,21 @@ Security:
         - urn:sec:Security.Authorization.Permission.Action::security:UpdateUser
         - urn:sec:Security.Authorization.Permission.Action::security:RemoveUser
         - urn:sec:Security.Authorization.Permission.Action::security:CreateUserGroup
-        - urn:sec:Security.Authorization.Permission.Action::security:AddToUserGroup
-        - urn:sec:Security.Authorization.Permission.Action::security:RemoveFromUserGroup
+        - urn:sec:Security.Authorization.Permission.Action::security:AddUserToGroup
+        - urn:sec:Security.Authorization.Permission.Action::security:RemoveUserFromGroup
         - urn:sec:Security.Authorization.Permission.Action::security:RemoveUserGroup
         - urn:sec:Security.Authorization.Permission.Action::security:CreateAction
         - urn:sec:Security.Authorization.Permission.Action::security:RemoveAction
         - urn:sec:Security.Authorization.Permission.Action::security:CreateRole
-        - urn:sec:Security.Authorization.Permission.Action::security:AddToRole
-        - urn:sec:Security.Authorization.Permission.Action::security:RemoveFromRole
+        - urn:sec:Security.Authorization.Permission.Action::security:AddActionToRole
+        - urn:sec:Security.Authorization.Permission.Action::security:RemoveActionFromRole
         - urn:sec:Security.Authorization.Permission.Action::security:RemoveRole
         - urn:sec:Security.Authorization.Permission.Action::security:CreateSecureResource
         - urn:sec:Security.Authorization.Permission.Action::security:RemoveSecureResource
         - urn:sec:Security.Authorization.Permission.Action::security:CreateResourceBelongsToRelation
-        - urn:sec:Security.Authorization.Permission.Action::security:ManageResourcePermissions
+        - urn:sec:Security.Authorization.Permission.Action::security:ManageGrantToAct
+        - urn:sec:Security.Authorization.Permission.Action::security:ManageGrantToPermit
+        - urn:sec:Security.Authorization.Permission.Action::security:ManageGrantToTrust
 
       - ** Create Roles **
       - urn:sec:Security.Authorization.Permission.Role::SecurityAdministration

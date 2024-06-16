@@ -6,7 +6,7 @@ all IDs are uuids, or semantic indicators like "jobs:read"
 
 
 Security Notes:
-- all security policy will be identity-based, attached to principal
+- all security policy will reference a resource and a principal
 - security policy grants for a resource, will apply to all resource children
   - BFFE caller may override
 - security policy grants can be created by anyone who has
@@ -65,9 +65,9 @@ Security:
         urn:sec:Security.Authentication.Session
     urn:sec:Security.Authentication.Principal.UserGroup // collection of User
 
-    Security.Authorization.Grant.Type.Act
-    Security.Authorization.Grant.Type.Permit
-    Security.Authorization.Grant.Type.Own
+    Security.Authorization.Grant.Type.Action
+    Security.Authorization.Grant.Type.Trust
+    Security.Authorization.Grant.Type.Ownership
 
     urn:sec:Security.Authorization.Grant
       . Type: Security.Authorization.Grant.Type.*
@@ -100,9 +100,9 @@ Security:
         - urn:sec:Security.Authorization.Permission.Action::security:CreateSecureResource
         - urn:sec:Security.Authorization.Permission.Action::security:RemoveSecureResource
         - urn:sec:Security.Authorization.Permission.Action::security:CreateResourceBelongsToRelation
-        - urn:sec:Security.Authorization.Permission.Action::security:ManageGrantToAct
-        - urn:sec:Security.Authorization.Permission.Action::security:ManageGrantToPermit
-        - urn:sec:Security.Authorization.Permission.Action::security:ManageGrantToOwn
+        - urn:sec:Security.Authorization.Permission.Action::security:ManageGrantToAction
+        - urn:sec:Security.Authorization.Permission.Action::security:ManageGrantToTrust
+        - urn:sec:Security.Authorization.Permission.Action::security:ManageGrantToOwnership
 
       - ** Create Roles **
       - urn:sec:Security.Authorization.Permission.Role::SecurityAdministration
@@ -128,7 +128,7 @@ Security:
         ]
 
       - urn:sec:Security.Authorization.Grant::SecurityAccessAdministrators
-        . Type: Security.Authorization.Grant.Type.Permit
+        . Type: Security.Authorization.Grant.Type.Trust
         . Principal: urn:sec:Security.Authorization.Principal.UserGroup::SecurityAccessAdministrators
         . Permission: urn:sec:Security.Authorization.Permission.Role::SecurityAdministration
         . Resource: [
@@ -142,7 +142,7 @@ Security:
         ]
 
       - urn:sec:Security.Authorization.Grant::SecurityAccessAdministrators
-      . Type: Security.Authorization.Grant.Type.Own
+      . Type: Security.Authorization.Grant.Type.Ownership
         . Principal: urn:sec:Security.Authorization.Principal.UserGroup::SecurityAccessAdministrators
         . Resource: [
           urn:sec:Security.Authorization.SecureResource::*
@@ -234,10 +234,10 @@ Security:
               - jobs:RemoveJobCreatedBySelf
               - jobs:RequestProcessServer
               - jobs:RequestJobAssignment
-              - jobs:Assign
-              - jobs:Unassign
-              - jobs:AssignToSelf
-              - jobs:UnassignToSelf
+              - jobs:AssignJobs
+              - jobs:UnassignJobs
+              - jobs:AssignJobsToUser
+              - jobs:UnassignJobsToUser
 
               ServiceRequest
                 - jobs:CreateServiceRequest
